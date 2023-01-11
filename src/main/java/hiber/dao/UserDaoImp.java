@@ -28,15 +28,12 @@ public class UserDaoImp implements UserDao {
    }
 
    @Override
-   @Transactional
    public User getUserByCar(String model, int series) {
-      TypedQuery<User> query = null;
+      TypedQuery<User> query;
       try {
-         TypedQuery<Car> carTypedQuery = sessionFactory.getCurrentSession().createQuery("from Car where model = :model and series = :series");
-         carTypedQuery.setParameter("model", model);
-         carTypedQuery.setParameter("series", series);
-         query = sessionFactory.getCurrentSession().createQuery("from User where car = :car");
-         query.setParameter("car", carTypedQuery.getSingleResult());
+         query = sessionFactory.getCurrentSession().createQuery("from User as User where User.car.model = :model and User.car.series = :series ");
+         query.setParameter("model", model);
+         query.setParameter("series", series);
          return query.getSingleResult();
       } catch (RuntimeException e) {
          System.out.println("This car doesn't exist");
